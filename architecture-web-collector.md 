@@ -1,0 +1,51 @@
+# Web Collector Expert - Project Architecture & Workflow
+
+## Project Objective
+
+Build a professional, production-ready hybrid data pipeline. The goal is to collect raw data from e-commerce sites, ensure data persistence through a **Medallion Architecture**, and serve cleaned, structured data via a **FastAPI** interface.
+
+---
+
+## Hybrid Data Pipeline Workflow
+
+### 1. Data Collection (Scraper Layer)
+
+* **Action:** Python script using `BeautifulSoup` or `Selenium` to crawl target websites (e.g., product sales sites).
+* **Data Points:** Title, Price (Raw), Description, Ratings, and Metadata.
+
+### 2. The "Bronze" Layer (MongoDB - Raw Data Storage)
+
+* **Why NoSQL?** To act as a "Safety Net". If the source website changes its layout, we don't lose the raw data already collected.
+* **Function:** Store the raw JSON objects exactly as they come from the scraper. No cleaning or transformation happens here.
+* **Storage:** MongoDB Cluster (Dockerized).
+
+### 3. The "Refining" Layer (Data Processing)
+
+* **Action:** A Python worker reads from MongoDB and uses `Pandas` for transformation.
+* **Tasks:**
+    -   **Data Cleaning:** Remove currency symbols and white spaces.
+    -   **Normalization:** Convert values to a standard currency (e.g., USD to BRL).
+    -   **Deduplication:** Ensure no duplicate entries are passed to the final database.
+    -   **Data Validation:** Check for missing or corrupted fields.
+
+### 4. The "Gold" Layer (PostgreSQL - Structured Storage)
+
+* **Why SQL?** For ACID compliance, complex queries, and reliable relationships.
+* **Function:** Store the high-quality, sanitized data. This is the source of truth for the API.
+* **Schema:** Strict table definitions using SQLAlchemy models.
+
+### 5. Delivery (FastAPI & Documentation)
+
+* **Action:** Serve the "Gold" data via professional API endpoints.
+* **Features:** Integrated Swagger UI, Pydantic validation, and environment-based security via `.env`.
+
+---
+
+## Technical Stack
+
+* **Language:** Python 3.12+
+* **Framework:** FastAPI
+* **Databases:** MongoDB (Raw) & PostgreSQL (Clean)
+* **Containerization:** Docker & Docker-Compose
+* **Environment Management:** `python-dotenv`
+* **Data Analysis:** `Pandas`

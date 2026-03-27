@@ -1,24 +1,27 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
+from dotenv import load_dotenv # Added to load env variables
 
-# Database connection URL configured for the Docker container network
-SQLALCHEMY_DATABASE_URL = "postgresql://user_admin:password123@localhost:5432/web_collection_db"
+# Load environment variables from .env file
+load_dotenv()
 
-# Create the engine to manage database connections
+# Get the Database URL from the environment
+# Defaults to None if not found, preventing hardcoded leaks
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Create the engine instance
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-# Session factory for creating local database session instances
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for declarative data models
 Base = declarative_base()
 
 def get_db():
     """
-    Dependency to provide a database session for each request.
-    Ensures the connection is properly closed after use.
+    Dependency to provide a database session.
+    Ensures connection lifecycle is managed professionally.
     """
     db = SessionLocal()
     try:
