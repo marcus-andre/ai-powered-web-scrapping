@@ -1,6 +1,7 @@
 # Data Collection (Scraper)
 beautifulsoup4==4.12.3
 requests==2.31.0
+fake-useragent==1.5.1
 
 # Bronze Layer (MongoDB)
 pymongo==4.6.2
