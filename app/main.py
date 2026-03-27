@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .database import engine, Base
+from .database_pgsql import engine, Base
 from .models import Product 
 
 # Core API Instance

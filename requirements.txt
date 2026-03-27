@@ -1,14 +1,16 @@
-# Web Framework
-fastapi==0.110.0
-uvicorn==0.27.1
-
-# Web Scraping
+# Data Collection (Scraper)
 beautifulsoup4==4.12.3
 requests==2.31.0
 
-# Database (PostgreSQL)
-sqlalchemy==2.0.27
-psycopg2-binary==2.9.9
+# Bronze Layer (MongoDB)
+pymongo==4.6.2
 
-# Environment Variables
+# Refining Layer (Pandas)
+pandas==2.2.1
+
+# Gold Layer & API (PostgreSQL + FastAPI)
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.29
+psycopg2-binary==2.9.9
 python-dotenv==1.0.1

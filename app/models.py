@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from datetime import datetime, timezone # Added timezone
-from .database import Base
+from .database_pgsql import Base
 
 class Product(Base):
     """
