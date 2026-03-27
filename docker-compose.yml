@@ -12,6 +12,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb_raw
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   app:
     build: .
     container_name: scraper_app
@@ -19,8 +28,11 @@ services:
       - .:/app
     environment:
       DATABASE_URL: postgresql://user_admin:password123@db:5432/web_collection_db
+      MONGO_URL: mongodb://mongodb:27017/raw_data_db
     depends_on:
       - db
+      - mongodb
 
 volumes:
   postgres_data:
+  mongo_data:
