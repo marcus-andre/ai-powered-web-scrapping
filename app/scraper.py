@@ -14,76 +14,85 @@ from .database_mongo import raw_data_collection
 ua = UserAgent()
 
 class ProductScraper:
-        """
-            Base class for web scraping operations.
-                Designed for professional data extraction.
-                    """
-                        
-                            def __init__(self):
-                                    # No static headers needed; they will be generated per request.
-                                            pass
+    """
+    Base class for web scraping operations.
+    Designed for professional data extraction.
+    """
 
-                                                def fetch_page(self, url: str) -> str | None:
-                                                        """
-                                                                Fetches the HTML content of a given URL.
-                                                                        """
-                                                                                try:
-                                                                                            headers = {'User-Agent': ua.random}
-                                                                                                        response = requests.get(url, headers=headers, timeout=10)
-                                                                                                                    response.raise_for_status()
-                                                                                                                                return response.text
-                                                                                                                                        except requests.RequestException as e:
-                                                                                                                                                    # Professional error logging
-                                                                                                                                                                logging.error(f"Error fetching {url}: {e}")
-                                                                                                                                                                            return None
+    def __init__(self):
+        # No static headers needed; they will be generated per request.
+        pass
 
-                                                                                                                                                                                def parse_product_data(self, html: str, url: str) -> dict | None:
-                                                                                                                                                                                        """
-                                                                                                                                                                                                Extracts product information from HTML.
-                                                                                                                                                                                                        This logic is tailored for books.toscrape.com for demonstration.
-                                                                                                                                                                                                                """
-                                                                                                                                                                                                                        if not html:
-                                                                                                                                                                                                                                    return None
-                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                        soup = BeautifulSoup(html, 'html.parser')
-                                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                                        try:
-                                                                                                                                                                                                                                                                                    # Specific selectors for the example site
-                                                                                                                                                                                                                                                                                                title = soup.find('div', class_='product_main').find('h1').get_text(strip=True)
-                                                                                                                                                                                                                                                                                                            price = soup.find('p', class_='price_color').get_text(strip=True)
-                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                    data = {
-                                                                                                                                                                                                                                                                                                                                                    "title": title,
-                                                                                                                                                                                                                                                                                                                                                                    "price": price,
-                                                                                                                                                                                                                                                                                                                                                                                    "url": url
-                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                            return data
-                                                                                                                                                                                                                                                                                                                                                                                                                    except Exception as e:
-                                                                                                                                                                                                                                                                                                                                                                                                                                logging.error(f"Parsing error on {url}: {e}")
-                                                                                                                                                                                                                                                                                                                                                                                                                                            return None
+    def fetch_page(self, url: str) -> str | None:
+        """Fetches the HTML content of a given URL."""
+        try:
+            headers = {'User-Agent': ua.random}
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            return response.text
+        except requests.RequestException as e:
+            logging.error(f"Error fetching {url}: {e}")
+            return None
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                def scrape_and_store(self, url: str):
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        """Orchestrates the scraping process and stores the raw result in MongoDB."""
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                logging.info(f"Scraping URL: {url}")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        html = self.fetch_page(url)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if not html:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            return
+    def parse_product_data(self, html: str, url: str) -> dict | None:
+        """Extracts product information from HTML (tailored for books.toscrape.com)."""
+        if not html:
+            return None
+            
+        soup = BeautifulSoup(html, 'html.parser')
+        
+        try:
+            # Specific selectors for the target site
+            title = soup.find('div', class_='product_main').find('h1').get_text(strip=True)
+            price = soup.find('p', class_='price_color').get_text(strip=True)
+            
+            # Extract rating. The site uses classes like 'star-rating Three'
+            rating_element = soup.find('p', class_='star-rating')
+            rating = rating_element.get('class')[1] if rating_element and len(rating_element.get('class')) > 1 else None
+            
+            # Extract product description
+            description = None
+            desc_header = soup.find('div', id='product_description')
+            if desc_header:
+                desc_paragraph = desc_header.find_next_sibling('p')
+                if desc_paragraph:
+                    description = desc_paragraph.get_text(strip=True)
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    parsed_data = self.parse_product_data(html, url)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if not parsed_data:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        return
+            data = {
+                "title": title,
+                "price": price,
+                "url": url,
+                "rating": rating,
+                "description": description
+            }
+            return data
+        except Exception as e:
+            logging.error(f"Parsing error on {url}: {e}")
+            return None
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                # Prepare the document for the Bronze layer
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        bronze_document = {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "source_url": url,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "scraped_at": datetime.now(timezone.utc),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "raw_data": parsed_data
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+    def scrape_and_store(self, url: str):
+        """Orchestrates the scraping process and stores the raw result in MongoDB."""
+        logging.info(f"Scraping URL: {url}")
+        
+        html = self.fetch_page(url)
+        if not html:
+            return
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            # Insert into MongoDB
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    result = raw_data_collection.insert_one(bronze_document)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            logging.info(f"Successfully stored raw data in MongoDB. Document ID: {result.inserted_id}")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        parsed_data = self.parse_product_data(html, url)
+        if not parsed_data:
+            return
+
+        # Prepare the document for the Bronze layer
+        bronze_document = {
+            "source_url": url,
+            "scraped_at": datetime.now(timezone.utc),
+            "raw_data": parsed_data
+        }
+
+        # Insert into MongoDB
+        result = raw_data_collection.insert_one(bronze_document)
+        logging.info(f"Successfully stored raw data in MongoDB. Document ID: {result.inserted_id}")
+
 # Quick test execution
 if __name__ == "__main__":
     scraper = ProductScraper()

@@ -7,17 +7,19 @@ from datetime import datetime
 from .database_pgsql import engine, Base, get_db
 from .models import Product
 
-# Pydantic schema para a resposta da API (um "Contrato de Dados")
-# Isso garante que a API sempre retorne dados limpos e previsíveis.
+# Pydantic schema for the API response (Data Contract). 
+# Ensures the API always returns clean and predictable data.
 class ProductSchema(BaseModel):
     id: int
     title: str
     price: float
     url: str
+    rating: str | None
+    description: str | None
     collected_at: datetime
 
     class Config:
-        from_attributes = True # Permite que o Pydantic leia dados de um modelo SQLAlchemy
+        from_attributes = True # Allows Pydantic to read data from an SQLAlchemy model
 
 # Core API Instance
 app = FastAPI(title="Web Collector Expert API")
@@ -35,8 +37,8 @@ def read_root():
 @app.get("/products/", response_model=List[ProductSchema], tags=["Products"])
 def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
-    Recupera os produtos limpos da camada Gold (PostgreSQL).
-    Este endpoint serve os dados finais de alta qualidade.
+    Retrieves clean products from the Gold layer (PostgreSQL).
+    This endpoint serves high-quality final data.
     """
     products = db.query(Product).offset(skip).limit(limit).all()
     return products

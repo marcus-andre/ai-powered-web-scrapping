@@ -49,3 +49,25 @@ Build a professional, production-ready hybrid data pipeline. The goal is to coll
 * **Containerization:** Docker & Docker-Compose
 * **Environment Management:** `python-dotenv`
 * **Data Analysis:** `Pandas`
+
+## Important
+
+* All the comments in the code has to be just the necessary, professional and in english
+
+---
+
+## Development Log & Next Steps
+
+### Update: March 26, 2026
+**What was accomplished today:**
+* **Infrastructure Robustness:** Implemented fail-fast validation for environment variables (`DATABASE_URL`, `MONGO_URL`) to prevent silent connection failures.
+* **Refining Layer Fixes:** Corrected transformation bugs in `refiner.py` (`clean_url` split logic, mapping the correct cleaned variables to the `Product` schema).
+* **Data Parsing:** Rewrote `clean_rating` to properly map English string ratings (e.g., "Three") to numeric strings ("3"), matching the SQLAlchemy Gold schema.
+* **Data Contract Documentation:** Added technical comments clarifying that `rating` and `description` are optional fields, ensuring valid products aren't skipped.
+
+**Where we stopped:**
+* The core Medallion Architecture (Bronze -> Refining -> Gold) is completely stable, robust, and idempotent. The pipeline successfully fetches, cleans, and stores single-page product data without duplicates.
+
+**Pending Tasks (To-Do for Next Session):**
+1. **Scraper Pagination:** Upgrade `scraper.py` to automatically find "Next" page links and crawl the entire catalog of products, instead of a hardcoded URL.
+2. **Pipeline Automation:** Implement a job scheduler (e.g., Cron, APScheduler) to trigger the `scraper.py` and `refiner.py` periodically.

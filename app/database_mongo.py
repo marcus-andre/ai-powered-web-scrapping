@@ -2,16 +2,20 @@ import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
-# Carrega as variáveis de ambiente
+# Load variables from .env if running outside Docker
 load_dotenv()
 
-# Pega a URL do MongoDB (fornecida pelo docker-compose)
-# O fallback padrão ajuda em testes locais fora do Docker
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/raw_data_db")
+# Fetch the variable injected by Docker or .env - no hardcoded strings here
+MONGO_URL = os.getenv("MONGO_URL")
 
-# Inicializa o cliente do MongoDB
+# Basic validation to ensure the infrastructure is correctly wired
+if not MONGO_URL:
+    raise ValueError("MONGO_URL environment variable is not set!")
+
 client = MongoClient(MONGO_URL)
 
-# Define o banco de dados e a coleção (tabela) da nossa camada Bronze
-db = client.get_database() # Pega o banco da URL (raw_data_db)
+# Define the database and collection for the Bronze layer
+
+# Access the specific database instance parsed from the connection string (MONGO_URL)
+db = client.get_database() 
 raw_data_collection = db["raw_html_payloads"]

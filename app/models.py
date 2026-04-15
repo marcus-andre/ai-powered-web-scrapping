@@ -13,6 +13,8 @@ class Product(Base):
     title = Column(String, index=True)
     price = Column(Float)
     url = Column(String, unique=True)
+    rating = Column(String)
+    description = Column(String)
     
     # Using the modern, timezone-aware approach
     collected_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
