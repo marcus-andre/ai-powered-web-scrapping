@@ -71,3 +71,18 @@ Build a professional, production-ready hybrid data pipeline. The goal is to coll
 **Pending Tasks (To-Do for Next Session):**
 1. **Scraper Pagination:** Upgrade `scraper.py` to automatically find "Next" page links and crawl the entire catalog of products, instead of a hardcoded URL.
 2. **Pipeline Automation:** Implement a job scheduler (e.g., Cron, APScheduler) to trigger the `scraper.py` and `refiner.py` periodically.
+
+### Update: April 16, 2026
+**What was accomplished today:**
+*   **Scraper Pagination Implemented:** The `scraper.py` was upgraded from a single-URL proof-of-concept to a full-fledged crawler. It now starts at the catalog's main page, extracts all product links, and navigates through all "Next" pages until the entire site is scraped.
+*   **Infrastructure Resilience:** Added `restart: always` to the `app` service in `docker-compose.yml`. This prevents the API from crashing if it starts before the database is fully ready, making the system more robust.
+*   **End-to-End Validation:** Successfully executed the full, paginated scraping and refining pipeline. Verified that multiple products are correctly collected, processed, and served through the `/products/` API endpoint.
+*   **Version Control:** Committed all changes to the repository following best practices for commit messages.
+
+**Where we stopped:**
+*   The data collection layer is now feature-complete for this target website. The entire Medallion pipeline (Bronze -> Gold -> API) is stable and can process the full catalog. The process, however, is still manually triggered.
+
+**Pending Tasks (To-Do for Next Session):**
+1.  **Pipeline Automation:** Implement a job scheduler (e.g., `APScheduler` within the FastAPI app) to trigger the `scraper.py` and `refiner.py` scripts periodically. This will make the data collection and refinement process fully autonomous.
+
+---
