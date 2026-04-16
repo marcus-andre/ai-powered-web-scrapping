@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timezone
 from fake_useragent import UserAgent
 import logging
+from urllib.parse import urljoin
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -93,8 +94,39 @@ class ProductScraper:
         result = raw_data_collection.insert_one(bronze_document)
         logging.info(f"Successfully stored raw data in MongoDB. Document ID: {result.inserted_id}")
 
+    def crawl_catalog(self, start_url: str):
+        """
+        Crawls an entire catalog by following 'next' page links.
+        Starts from a given URL and scrapes all products found.
+        """
+        next_page_url = start_url
+        page_num = 1
+
+        while next_page_url:
+            logging.info(f"--- Scraping Catalog Page {page_num}: {next_page_url} ---")
+            html = self.fetch_page(next_page_url)
+            if not html:
+                break
+
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            # Find all product links on the current page
+            product_links = soup.select('article.product_pod h3 a')
+            for link in product_links:
+                # Construct the absolute URL for the product page
+                product_url = urljoin(next_page_url, link['href'])
+                self.scrape_and_store(product_url)
+
+            # Find the 'next' page link
+            next_link_element = soup.select_one('li.next a')
+            if next_link_element:
+                next_page_url = urljoin(start_url, next_link_element['href'])
+                page_num += 1
+            else:
+                next_page_url = None # No more pages, exit loop
+
 # Quick test execution
 if __name__ == "__main__":
     scraper = ProductScraper()
-    test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-    scraper.scrape_and_store(test_url)
+    start_url = "http://books.toscrape.com/catalogue/category/books_1/index.html"
+    scraper.crawl_catalog(start_url)
