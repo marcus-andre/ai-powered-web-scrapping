@@ -30,7 +30,7 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-user_admin}:${POSTGRES_PASSWORD:-password123}@db:5432/${POSTGRES_DB:-web_collection_db}
       MONGO_URL: mongodb://mongodb:27017/raw_data_db
-      API_KEY: ${API_KEY:-super-secret-key-123} # Security token for API access
+      API_KEY: ${API_KEY} # Security token for API access
     ports:
       - "8000:8000"
     depends_on:
