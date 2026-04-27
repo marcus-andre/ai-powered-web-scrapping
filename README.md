@@ -23,7 +23,7 @@ The project implements a modern data engineering pattern (Bronze/Gold Layers) to
 
 1. **🌐 Scraper Layer:** Automated crawling with smart pagination and user-agent rotation.
 2. **🥉 Bronze Layer (MongoDB):** Unstructured, raw data storage. The ultimate fallback.
-3. **⚙️ Processing Worker (Pandas):** Cleans prices, normalizes text, removes HTML tags, and ensures idempotency (no duplicates).
+3. **⚙️ Processing Worker (Python):** Cleans prices, normalizes text, removes HTML tags, and ensures idempotency (no duplicates).
 4. **🥇 Gold Layer (PostgreSQL):** Relational, strict-schema storage for high-quality final data.
 5. **📊 Delivery (FastAPI & Streamlit):** Data served through secured API endpoints and an interactive web panel.
 
@@ -34,7 +34,7 @@ The project implements a modern data engineering pattern (Bronze/Gold Layers) to
 * **Languages:** Python 3.11+
 * **Web Scraping:** `BeautifulSoup4`, `Requests`, `Fake-UserAgent`
 * **Backend & API:** `FastAPI`, `Pydantic`, `SQLAlchemy`
-* **Data Processing:** `Pandas`, `Regex`
+* **Data Processing:** `Python (Native)`, `Regex`
 * **Automation:** `APScheduler`
 * **Databases:** `PostgreSQL` (Relational), `MongoDB` (NoSQL)
 * **Frontend/Dashboard:** `Streamlit`

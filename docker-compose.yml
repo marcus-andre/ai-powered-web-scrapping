@@ -4,9 +4,9 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: user_admin
-      POSTGRES_PASSWORD: password123 # 
-      POSTGRES_DB: web_collection_db
+      POSTGRES_USER: ${POSTGRES_USER:-user_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password123}
+      POSTGRES_DB: ${POSTGRES_DB:-web_collection_db}
     ports:
       - "5432:5432"
     volumes:
@@ -28,9 +28,9 @@ services:
     volumes:
       - .:/app
     environment:
-      DATABASE_URL: postgresql://user_admin:password123@db:5432/web_collection_db
-      MONGO_URL: mongodb://mongodb:27017/raw_data_db
-      API_KEY: "super-secret-key-123" # Security token for API access
+      DATABASE_URL: ${DATABASE_URL:-postgresql://user_admin:password123@db:5432/web_collection_db}
+      MONGO_URL: ${MONGO_URL:-mongodb://mongodb:27017/raw_data_db}
+      API_KEY: ${API_KEY:-super-secret-key-123} # Security token for API access
     ports:
       - "8000:8000"
     depends_on:
@@ -44,8 +44,9 @@ services:
     volumes:
       - .:/app
     environment:
-      API_URL: http://app:8000
-      API_KEY: "super-secret-key-123"
+      API_URL: ${API_URL:-http://app:8000}
+      API_KEY: ${API_KEY:-super-secret-key-123}
+      DEMO_MODE: ${DEMO_MODE:-false}
     ports:
       - "8501:8501" # Default Streamlit port
     command: ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
