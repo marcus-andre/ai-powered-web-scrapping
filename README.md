@@ -3,17 +3,32 @@
 <p align="center">
   <strong>Enterprise-Grade Automated Data Extraction & Processing Pipeline</strong>
 </p>
+
 ## 📌 About The Project
 
 **Web Collector Expert** is a highly resilient, fully containerized hybrid data pipeline designed to extract raw data from target websites, process it into clean, structured datasets, and serve it via an interactive Dashboard and a REST API.
 
 Whether you need to monitor competitor pricing, aggregate catalog data, or feed machine learning models, this system guarantees **no data loss** and **idempotent** data ingestion.
 
-### 🚀 Key Value Propositions (For Clients)
+### 🚀 Key Value Propositions
 * **Safety Net Architecture:** Source website changed its layout? No problem. We store the raw HTML/JSON in a NoSQL database *before* processing it. You never lose historical data.
 * **High Data Quality:** Cleaned, deduplicated, and standardized data delivered via rigorous Data Contracts (Pydantic). 
 * **Full Automation:** Configure the bot once via the interactive dashboard and let it run on a schedule.
-* **Turnkey Solution:** One single command (`docker-compose up`) brings up the entire infrastructure.
+* **Cloud-Ready & Turnkey Local:** Deployed on Render for live access, with a single `docker-compose up` command for local development.
+
+---
+
+## 🌐 Live Demo (Cloud Deployment)
+
+The project is currently deployed and live. You can interact with the system here:
+
+* **📊 Live Dashboard (Streamlit):** [https://web-collector-dashboard.onrender.com](https://web-collector-dashboard.onrender.com)
+* **⚙️ REST API (Swagger UI):** [https://web-collector-expert.onrender.com/docs](https://web-collector-expert.onrender.com/docs)
+
+**Cloud Infrastructure Setup:**
+* **Frontend & Backend Hosting:** Render (Web Services)
+* **Bronze Layer Database:** MongoDB Atlas (Cloud NoSQL)
+* **Gold Layer Database:** Neon (Serverless PostgreSQL)
 
 ---
 
@@ -23,22 +38,24 @@ The project implements a modern data engineering pattern (Bronze/Gold Layers) to
 
 1. **🌐 Scraper Layer:** Automated crawling with smart pagination and user-agent rotation.
 2. **🥉 Bronze Layer (MongoDB):** Unstructured, raw data storage. The ultimate fallback.
-3. **⚙️ Processing Worker (Python):** Cleans prices, normalizes text, removes HTML tags, and ensures idempotency (no duplicates).
+3. **⚙️ Processing Worker (Pandas):** Cleans prices, normalizes text, removes HTML tags, and ensures idempotency.
 4. **🥇 Gold Layer (PostgreSQL):** Relational, strict-schema storage for high-quality final data.
 5. **📊 Delivery (FastAPI & Streamlit):** Data served through secured API endpoints and an interactive web panel.
 
 ---
 
-## 💻 Technologies Used
+## 🛠️ Virtual Environment & Tools Explained
 
-* **Languages:** Python 3.11+
-* **Web Scraping:** `BeautifulSoup4`, `Requests`, `Fake-UserAgent`
-* **Backend & API:** `FastAPI`, `Pydantic`, `SQLAlchemy`
-* **Data Processing:** `Python (Native)`, `Regex`
-* **Automation:** `APScheduler`
-* **Databases:** `PostgreSQL` (Relational), `MongoDB` (NoSQL)
-* **Frontend/Dashboard:** `Streamlit`
-* **DevOps:** `Docker`, `Docker Compose`
+To maintain a lean and efficient environment, specific tools were carefully selected for this architecture:
+
+* **`fastapi` & `uvicorn`**: Powers the high-performance REST API and its asynchronous server.
+* **`streamlit`**: Rapidly builds the interactive, data-focused web dashboard for users.
+* **`beautifulsoup4`, `requests`, `fake-useragent`**: The core scraping stack for fetching, parsing HTML, and avoiding basic bot detection.
+* **`pandas`**: The workhorse of the Refining Layer, used to clean, transform, and deduplicate data efficiently.
+* **`motor`, `pymongo`, `dnspython`**: Drivers enabling asynchronous and secure connections to the MongoDB Atlas cluster.
+* **`sqlalchemy`, `psycopg2-binary`**: ORM and driver handling structured transactions with the PostgreSQL database.
+* **`apscheduler`**: Manages the internal clock for automated, scheduled web scraping routines.
+* **`python-dotenv`**: Keeps sensitive credentials (like `API_KEY` and database URLs) secure and out of the source code.
 
 ---
 
