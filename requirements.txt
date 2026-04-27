@@ -4,8 +4,8 @@ requests==2.31.0
 fake-useragent==1.5.1
 
 # Bronze Layer (MongoDB)
-motor==3.4.0
 pymongo==4.7.2
+dnspython==2.6.1
 
 # Refining Layer (Pandas)
 pandas==2.2.2
