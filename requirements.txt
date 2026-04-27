@@ -7,7 +7,7 @@ fake-useragent==1.5.1
 pymongo==4.6.2
 
 # Refining Layer (Pandas)
-pandas==2.2.1
+pandas
 
 # Gold Layer & API (PostgreSQL + FastAPI)
 fastapi==0.110.0
