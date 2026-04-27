@@ -18,3 +18,7 @@ python-dotenv==1.0.1
 
 # Interactive Development & Exploration
 jupyter==1.0.0
+
+# Dashboard & Automation
+streamlit==1.33.0
+apscheduler==3.10.4

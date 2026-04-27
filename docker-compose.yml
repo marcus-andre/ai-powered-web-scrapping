@@ -37,6 +37,21 @@ services:
       - db
       - mongodb
 
+  dashboard:
+    build: .
+    container_name: streamlit_dashboard
+    restart: always
+    volumes:
+      - .:/app
+    environment:
+      API_URL: http://app:8000
+      API_KEY: "super-secret-key-123"
+    ports:
+      - "8501:8501" # Default Streamlit port
+    command: ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    depends_on:
+      - app
+
 volumes:
   postgres_data:
   mongo_data:

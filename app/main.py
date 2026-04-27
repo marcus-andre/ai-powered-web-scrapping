@@ -1,13 +1,16 @@
 import os
-from fastapi import FastAPI, Depends, Security, HTTPException, status
+from fastapi import FastAPI, Depends, Security, HTTPException, status, BackgroundTasks
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
 from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from .database_pgsql import engine, Base, get_db
 from .models import Product
+from .scraper import ProductScraper
+from .refiner import process_bronze_to_gold
 
 # Pydantic schema for the API response (Data Contract). 
 # Ensures the API always returns clean and predictable data.
@@ -29,6 +32,10 @@ app = FastAPI(title="Web Collector Expert API")
 # Database Initialization: Creates tables automatically on startup
 Base.metadata.create_all(bind=engine)
 
+# Background Scheduler Initialization
+scheduler = BackgroundScheduler()
+scheduler.start()
+
 # API Key Security Configuration
 API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
@@ -47,6 +54,14 @@ def get_api_key(api_key: str = Security(api_key_header)):
         status_code=status.HTTP_403_FORBIDDEN, detail="Could not validate API credentials"
     )
 
+def run_etl_pipeline():
+    """Orchestrator function that runs the Scraper and then the Refiner."""
+    import logging
+    logging.info("Starting complete pipeline (Scraper -> Refiner)...")
+    scraper = ProductScraper()
+    scraper.crawl_catalog("http://books.toscrape.com/catalogue/category/books_1/index.html")
+    process_bronze_to_gold()
+
 @app.get("/", tags=["Status"])
 def read_root():
     """
@@ -62,3 +77,24 @@ def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
     """
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
+
+@app.post("/trigger-pipeline/", tags=["Actions"])
+def trigger_pipeline(background_tasks: BackgroundTasks, api_key: str = Depends(get_api_key)):
+    """
+    Starts data collection and refinement immediately in the background.
+    """
+    background_tasks.add_task(run_etl_pipeline)
+    return {"message": "Pipeline started in the background. Check the server logs."}
+
+@app.post("/schedule-pipeline/", tags=["Actions"])
+def schedule_pipeline(interval_minutes: int, api_key: str = Depends(get_api_key)):
+    """
+    Configures a schedule to run the pipeline every X minutes.
+    """
+    # Remove any previous schedule to avoid duplication
+    scheduler.remove_all_jobs()
+    
+    # Add the new schedule
+    scheduler.add_job(run_etl_pipeline, 'interval', minutes=interval_minutes, id='pipeline_job')
+    
+    return {"message": f"Schedule configured! The bot will run every {interval_minutes} minutes."}
