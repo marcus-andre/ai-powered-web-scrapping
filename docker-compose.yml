@@ -28,8 +28,8 @@ services:
     volumes:
       - .:/app
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://user_admin:password123@db:5432/web_collection_db}
-      MONGO_URL: ${MONGO_URL:-mongodb://mongodb:27017/raw_data_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user_admin}:${POSTGRES_PASSWORD:-password123}@db:5432/${POSTGRES_DB:-web_collection_db}
+      MONGO_URL: mongodb://mongodb:27017/raw_data_db
       API_KEY: ${API_KEY:-super-secret-key-123} # Security token for API access
     ports:
       - "8000:8000"
