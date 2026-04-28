@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from fake_useragent import UserAgent
 import logging
 from urllib.parse import urljoin
-
+import os
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -96,13 +96,19 @@ class ProductScraper:
 
     def crawl_catalog(self, start_url: str):
         """
-        Crawls an entire catalog by following 'next' page links.
-        Starts from a given URL and scrapes all products found.
+        Crawls the product catalog implementing a scrap limit and deduplication logic.
         """
+        # Fetch environment variable for scrape limit; default to 10
+        limit = int(os.getenv("SCRAPE_LIMIT", "10"))
+        scraped_count = 0
+
+        # Load unique URLs from Bronze layer to prevent redundant scraping
+        existing_urls = raw_data_collection.distinct("source_url")
+
         next_page_url = start_url
         page_num = 1
 
-        while next_page_url:
+        while next_page_url and scraped_count < limit:
             logging.info(f"--- Scraping Catalog Page {page_num}: {next_page_url} ---")
             html = self.fetch_page(next_page_url)
             if not html:
@@ -112,10 +118,24 @@ class ProductScraper:
             
             # Find all product links on the current page
             product_links = soup.select('article.product_pod h3 a')
+
             for link in product_links:
+                # Terminate loop if session limit is reached
+                if scraped_count >= limit:
+                    break
                 # Construct the absolute URL for the product page
                 product_url = urljoin(next_page_url, link['href'])
+
+                # Deduplication check against local memory set
+                if product_url in existing_urls:
+                    logging.info(f"Skipping already scraped URL: {product_url}")
+                    continue
+
                 self.scrape_and_store(product_url)
+                scraped_count += 1
+
+            if scraped_count >= limit:
+                break
 
             # Find the 'next' page link
             next_link_element = soup.select_one('li.next a')
@@ -124,7 +144,8 @@ class ProductScraper:
                 page_num += 1
             else:
                 next_page_url = None # No more pages, exit loop
-
+        logging.info(f"Worker finished. New items collected: {scraped_count}")
+        
 # Quick test execution
 if __name__ == "__main__":
     scraper = ProductScraper()
