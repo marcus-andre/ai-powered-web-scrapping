@@ -102,7 +102,7 @@ Once the containers are running, you can access the following services:
   - Visualize the clean data (Gold Layer) in a tabular format.
 
 ### 2. REST API & Swagger UI (FastAPI)
-![Swagger UI Preview](./assets/api-swagger.png)
+![Swagger UI Preview](./assets/screenshots/api-swagger.png)
 * **URL:** http://localhost:8000/docs
 * **What you can do:** 
   - Explore the API endpoints directly from your browser.
