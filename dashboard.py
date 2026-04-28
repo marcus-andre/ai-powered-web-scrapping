@@ -50,7 +50,7 @@ st.divider()
 
 st.header("📊 Collected Data (Gold Layer)")
 if st.button("🔄 Refresh Table"):
-    resp = requests.get(f"{API_URL}/products/?limit=10", headers=HEADERS)
+    resp = requests.get(f"{API_URL}/products/?limit=500", headers=HEADERS)
     if resp.status_code == 200:
         df = pd.DataFrame(resp.json())
         st.dataframe(df, use_container_width=True)
