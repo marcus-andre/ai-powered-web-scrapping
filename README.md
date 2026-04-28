@@ -11,8 +11,8 @@
 Whether you need to monitor competitor pricing, aggregate catalog data, or feed machine learning models, this system guarantees **no data loss** and **idempotent** data ingestion.
 
 ## 🖼️ Project Preview
-![Dashboard Principal](assets/screenshots/dashboard-preview.png)
-![Collected Data Table](assets/screenshots/dashboard-CollectedData-table.png)
+![Dashboard Principal](./assets/screenshots/dashboard-preview.png)
+![Collected Data Table](./assets/screenshots/dashboard-CollectedData-table.png)
 
 ### 🚀 Key Value Propositions
 * **Safety Net Architecture:** Source website changed its layout? No problem. We store the raw HTML/JSON in a NoSQL database *before* processing it. You never lose historical data.
@@ -102,7 +102,7 @@ Once the containers are running, you can access the following services:
   - Visualize the clean data (Gold Layer) in a tabular format.
 
 ### 2. REST API & Swagger UI (FastAPI)
-![Swagger UI Preview](assets/api-swagger.png)
+![Swagger UI Preview](./assets/api-swagger.png)
 * **URL:** http://localhost:8000/docs
 * **What you can do:** 
   - Explore the API endpoints directly from your browser.
