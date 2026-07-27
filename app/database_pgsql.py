@@ -16,7 +16,7 @@ if not SQLALCHEMY_DATABASE_URL:
 # Initialize SQLAlchemy engine
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-# Configure session factory
+# Configure session factory 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for SQLAlchemy models

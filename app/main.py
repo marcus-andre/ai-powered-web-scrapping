@@ -6,25 +6,12 @@ from typing import List
 from pydantic import BaseModel
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from .models import Product, ProductSchema
 from .database_pgsql import engine, Base, get_db
 from .models import Product
 from .scraper import ProductScraper
 from .refiner import process_bronze_to_gold
 
-# Pydantic schema for the API response (Data Contract). 
-# Ensures the API always returns clean and predictable data.
-class ProductSchema(BaseModel):
-    id: int
-    title: str
-    price: float
-    url: str
-    rating: str | None
-    description: str | None
-    collected_at: datetime
-
-    class Config:
-        from_attributes = True # Allows Pydantic to read data from an SQLAlchemy model
 
 # Core API Instance
 app = FastAPI(title="Web Collector Expert API")
