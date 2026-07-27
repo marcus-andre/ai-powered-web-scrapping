@@ -11,7 +11,7 @@ from .database_pgsql import engine, Base, get_db
 from .models import Product
 from .scraper import ProductScraper
 from .refiner import process_bronze_to_gold
-from app.scraper import run_scraper
+
 
 # Core API Instance
 app = FastAPI(title="Web Collector Expert API")
@@ -70,7 +70,10 @@ def reset_and_reprocess():
         raw_data_collection.delete_many({})
 
         # 3. Run Scraper to get fresh Bronze data
-        run_scraper()
+        scraper = ProductScraper()
+        scraper.crawl_catalog(
+            "http://books.toscrape.com/catalogue/category/books_1/index.html"
+        )
 
         # 4. Run Refiner to process Bronze -> Gold with Gemini AI
         process_bronze_to_gold()
