@@ -66,6 +66,9 @@ def reset_and_reprocess(api_key: str = Depends(get_api_key)):
             connection.execute(text("DROP TABLE IF EXISTS products CASCADE;"))
             connection.commit()
 
+        # Recreate the tables right after dropping
+        Base.metadata.create_all(bind=engine)
+
         # 2. Clear MongoDB Bronze collection
         raw_data_collection.delete_many({})
 
