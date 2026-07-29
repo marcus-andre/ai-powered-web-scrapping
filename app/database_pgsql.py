@@ -14,15 +14,18 @@ if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set!")
 
 # Initialize SQLAlchemy engine
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True,
+                       pool_recycle=300)
 
-# Configure session factory 
+# Configure session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for SQLAlchemy models
 Base = declarative_base()
 
 # FastAPI dependency for database session management
+
+
 def get_db():
     db = SessionLocal()
     try:
