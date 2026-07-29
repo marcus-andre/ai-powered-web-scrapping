@@ -1,5 +1,5 @@
 import os
-import google.generativeai as genai
+import google as genai
 from google.genai import types
 from app.models import DataAnalysisResult
 
