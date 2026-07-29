@@ -14,7 +14,7 @@ from .refiner import process_bronze_to_gold
 
 
 # Core API Instance
-app = FastAPI(title="Web Collector Expert API")
+app = FastAPI(title="AI Powered Web Scrapping API")
 
 # Database Initialization: Creates tables automatically on startup
 Base.metadata.create_all(bind=engine)
@@ -55,7 +55,7 @@ def run_etl_pipeline():
 
 
 @app.post("/admin/reset-and-reprocess")
-def reset_and_reprocess():
+def reset_and_reprocess(api_key: str = Depends(get_api_key)):
     """
     Temporary endpoint to drop PostgreSQL table, clear MongoDB, 
     and re-run scraper + refiner directly on Render production environment.

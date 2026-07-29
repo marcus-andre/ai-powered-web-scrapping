@@ -1,7 +1,7 @@
 import os
-from google import genai
+import google.generativeai as genai
 from google.genai import types
-from app.models import DataAnalysisResult  # Importando do seu models.py!
+from app.models import DataAnalysisResult
 
 
 def analyze_content_with_gemini(raw_text: str) -> DataAnalysisResult:
