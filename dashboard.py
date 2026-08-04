@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="AI Powered Data Collector Dashboard", page_icon="🕷️", layout="wide"
 )
 
-st.title("🕷️ Web Collector Dashboard")
+st.title("🕷️ AI Powered Web Collector Dashboard")
 st.markdown("Welcome to the data extraction control panel.")
 
 if DEMO_MODE:

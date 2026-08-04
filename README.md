@@ -1,4 +1,4 @@
-<h1 align="center">🕷️ Web Collector Expert</h1>
+<h1 align="center">🕷️ AI Powered Web Scrapping</h1>
 
 <p align="center">
   <strong>Enterprise-Grade Automated Data Extraction & AI-Enriched Processing Pipeline</strong>
@@ -6,7 +6,7 @@
 
 ## 📌 About The Project
 
-**Web Collector Expert** is a highly resilient, fully containerized hybrid data pipeline designed to extract raw data from target websites, process it into clean, structured datasets, enrich it using Large Language Models (LLMs), and serve it via an interactive Dashboard and a REST API.
+**AI Powered Web Scrapping** is a highly resilient, fully containerized hybrid data pipeline designed to extract raw data from target websites, process it into clean, structured datasets, enrich it using Large Language Models (LLMs), and serve it via an interactive Dashboard and a REST API.
 
 Whether you need to monitor competitor pricing, aggregate catalog data, or feed machine learning models, this system guarantees **no data loss** and **idempotent** data ingestion, now supercharged with Google Gemini AI.
 
