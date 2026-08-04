@@ -55,10 +55,10 @@ def run_etl_pipeline():
 
 
 @app.post("/admin/clean-database")
-def reset_and_reprocess(api_key: str = Depends(get_api_key)):
+def clean_database(api_key: str = Depends(get_api_key)):
     """
     Temporary endpoint to drop PostgreSQL table, clear MongoDB, 
-    and re-run scraper + refiner directly on Render production environment.
+    on Render production environment.
     """
     try:
         # 1. Drop Gold Table in PostgreSQL to recreate schema with new AI columns
