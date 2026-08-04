@@ -54,7 +54,7 @@ def run_etl_pipeline():
     process_bronze_to_gold()
 
 
-@app.post("/admin/reset-and-reprocess")
+@app.post("/admin/clean-database")
 def reset_and_reprocess(api_key: str = Depends(get_api_key)):
     """
     Temporary endpoint to drop PostgreSQL table, clear MongoDB, 
@@ -72,23 +72,14 @@ def reset_and_reprocess(api_key: str = Depends(get_api_key)):
         # 2. Clear MongoDB Bronze collection
         raw_data_collection.delete_many({})
 
-        # 3. Run Scraper to get fresh Bronze data
-        scraper = ProductScraper()
-        scraper.crawl_catalog(
-            "http://books.toscrape.com/catalogue/category/books_1/index.html"
-        )
-
-        # 4. Run Refiner to process Bronze -> Gold with Gemini AI
-        process_bronze_to_gold()
-
         return {
             "status": "success",
-            "message": "Database reset, scraped, and refined with AI successfully!",
+            "message": "Database reset and cleaned successfully!",
         }
 
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to reset and reprocess: {str(e)}"
+            status_code=500, detail=f"Failed to reset and clean: {str(e)}"
         )
 
 
