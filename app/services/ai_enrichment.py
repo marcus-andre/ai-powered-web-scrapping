@@ -23,7 +23,7 @@ def analyze_content_with_gemini(raw_text: str) -> DataAnalysisResult:
     """
 
     # Use the configured generative model
-    model = genai.GenerativeModel("gemini-1.5-flash-latest")
+    model = genai.GenerativeModel("gemini-3.1-flash-lite")
     response = model.generate_content(
         contents=prompt,
         generation_config=genai.types.GenerationConfig(
